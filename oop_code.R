@@ -22,9 +22,23 @@ subject <- function(x,n){
 print.SubjectLD <- function(x){
   nr<-nrow(x$dataSD$dataLD %>% filter(id==x$subj_id))
   if(nr != 0)
-    return(paste("Subject ID:",x$subj_id))
+    if(x$sum == FALSE)
+      return(paste("Subject ID:",x$subj_id))
+    else
+    {
+      x$sum<-FALSE
+      strPrint<-paste0(print(x),"\n",x$dataSD)
+      x$sum<-TRUE
+      return(strPrint)
+    }
   else
     return(NULL)
+}
+
+#summary <- function(x) UseMethod("summary")
+summary.SubjectLD <- function(x){
+  x$sum <- TRUE
+  return(x)
 }
 
 visit <- function(x,n){
