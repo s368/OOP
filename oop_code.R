@@ -1,6 +1,4 @@
-library(tidyr)
-library(dplyr)
-
+#########################################################################
 #The implementation is done in S3 class system.
 #
 #The order of the encapsulation:  
@@ -10,6 +8,11 @@ library(dplyr)
 #modify the printout of the class instance.
 #
 #########################################################################
+
+library(tidyr)
+library(dplyr)
+
+#########################################################################
 # LongitudinalData class
 #########################################################################
 make_LD <- function(x){
@@ -18,7 +21,7 @@ make_LD <- function(x){
 
 print.LongitudinalData <- function(x){
   n <- length(table(x$dataLD$id))
-  paste("Longitudinal dataset with",n,"subjects")
+  print(paste("Longitudinal dataset with",n,"subjects"))
 }
 
 #########################################################################
@@ -33,13 +36,11 @@ print.SubjectLD <- function(x){
              filter(id==x$subj_id))
   if(nr != 0)
     if(x$sum == FALSE)
-      paste("Subject ID:",x$subj_id)
+      print(paste("Subject ID:",x$subj_id))
     else
     {
-      x$sum<-FALSE # to avoid infinite recursion but re-use 'print.SubjectLD'!
-      print(paste(print(x)))
-      x$sum<-TRUE
-
+      print(paste("Subject ID:",x$subj_id))
+      
       df<-x$dataSD$dataLD %>% filter(id==x$subj_id) %>% 
         select(-id) %>%
           group_by(visit,room) %>% 
@@ -48,7 +49,7 @@ print.SubjectLD <- function(x){
       print(as.data.frame(df))
     }
   else
-    NULL
+    print(NULL)
 }
 
 summary.SubjectLD <- function(x){
@@ -70,15 +71,13 @@ print.VisitLD <- function(x){
   {
     if(x$sum == FALSE)
     {
-      strPrint <- print(x$dataVD)
-      cat(strPrint,"\nVisit:",x$visit_id)
+      print(paste("Subject ID:",x$dataVD$subj_id))
+      print(paste("Visit:",x$visit_id))
     }
     else
     {
-      x$sum<-FALSE # to avoid infinite recursion but re-use 'print.VisitLD'!
-      strPrint <- print(x$dataVD)
-      cat(strPrint,"\nVisit:",x$visit_id,"\n")
-      x$sum<-TRUE
+      print(paste("Subject ID:",x$dataVD$subj_id))
+      print(paste("Visit:",x$visit_id))
       
       df<-x$dataVD$dataSD$dataLD %>% 
         filter(id==x$dataVD$subj_id & visit==x$visit_id) %>%
@@ -90,7 +89,7 @@ print.VisitLD <- function(x){
     }
   }
   else
-    NULL
+    print(NULL)
 }
 
 summary.VisitLD <- function(x){
@@ -112,15 +111,15 @@ print.RoomLD <- function(x){
   {
     if(x$sum == FALSE)
     {
-      strPrint <- print(x$dataRD)
-      cat(strPrint,"\nRoom:",x$room_id)
+      print(paste("Subject ID:",x$dataRD$dataVD$subj_id))
+      print(paste("Visit:",x$dataRD$visit_id))
+      print(paste("Room:",x$room_id))
     }
     else
     {
-      x$sum<-FALSE # to avoid infinite recursion but re-use 'print.VisitLD'!
-      strPrint <- print(x$dataRD)
-      cat(strPrint,"\nRoom:",x$room_id,"\n")
-      x$sum<-TRUE
+      print(paste("Subject ID:",x$dataRD$dataVD$subj_id))
+      print(paste("Visit:",x$dataRD$visit_id))
+      print(paste("Room:",x$room_id))
       
       df<-x$dataRD$dataVD$dataSD$dataLD %>% filter(id==x$dataRD$dataVD$subj_id & 
                                               visit==x$dataRD$visit_id &
@@ -130,10 +129,13 @@ print.RoomLD <- function(x){
     }
   }
   else
-    NULL
+    print(NULL)
 }
 
 summary.RoomLD <- function(x){
   x$sum <- TRUE
   return(x)
 }
+#########################################################################
+# END
+#########################################################################
