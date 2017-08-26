@@ -63,15 +63,33 @@ visit <- function(x,n){
 }
 
 print.VisitLD <- function(x){
-  nr<-nrow(x$dataVD$dataSD$dataLD %>% filter(visit==x$visit_id))
+  nr<-nrow(x$dataVD$dataSD$dataLD %>% filter(id==x$dataVD$subj_id & visit==x$visit_id))
   if(nr != 0)
   {
-    strPrint <- print(x$dataVD)
-    strPrint <- paste(strPrint,"\nVisit:",x$visit_id)
-    return(cat(strPrint))
+    if(x$sum == FALSE)
+      paste("Subject ID:",x$subj_id)
+    else
+    {
+      x$sum<-FALSE # to avoid infinite recursion but re-use 'print.VisitLD'!
+      strPrint <- print(x$dataVD)
+      cat(strPrint,"\nVisit:",x$visit_id,"\n")
+      x$sum<-TRUE
+      
+      df<-x$dataVD$dataSD$dataLD %>% filter(id==x$dataVD$subj_id & visit==x$visit_id) %>%
+        select(-id,-visit) %>%
+        group_by(room) %>%
+        summarise(m = mean(value)) %>%
+        spread(room,m)
+      print(df)
+    }
   }
   else
-    return(NULL)
+    NULL
+}
+
+summary.VisitLD <- function(x){
+  x$sum <- TRUE
+  return(x)
 }
 
 #########################################################################
