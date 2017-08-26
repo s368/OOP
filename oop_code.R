@@ -40,9 +40,10 @@ print.SubjectLD <- function(x){
       x$sum<-TRUE
 
       df<-x$dataSD$dataLD %>% filter(id==x$subj_id) %>% 
-        group_by(id,visit,room) %>% 
-        summarise(m = mean(value)) %>%  
-        spread(room,m)
+        select(-id) %>%
+          group_by(visit,room) %>% 
+            summarise(m = mean(value)) %>%  
+              spread(room,m)
       print(df)
     }
   else
