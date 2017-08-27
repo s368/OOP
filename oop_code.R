@@ -12,6 +12,10 @@
 library(tidyr)
 library(dplyr)
 
+subject<-function(x,id)UseMethod("subject") #create generic subject function
+visit<-function(x,visit_num)UseMethod("visit") #create generic visit function
+room<-function(x,room_name)UseMethod("room") #create generic room function
+
 #########################################################################
 # LongitudinalData class
 #########################################################################
